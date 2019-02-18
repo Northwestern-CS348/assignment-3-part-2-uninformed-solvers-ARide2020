@@ -165,7 +165,7 @@ class TowerOfHanoiGame(GameMaster):
             cb = cb + 1
 
         #making sure theere is something under disk were moving if we need to make changes or nah
-        if cb != 6:
+        if cb < 6:
             fromPegBelowDisk = "disk" + str(cb)
 
             newTopFromPeg = parse_input("fact: (TheTop " + fromPegBelowDisk + " " + frompeg + ")")
@@ -185,7 +185,7 @@ class TowerOfHanoiGame(GameMaster):
 
 
         topegEmpty = False
-        checkEmpty = parse_input("fact: (empty + " + topeg + ")")
+        checkEmpty = parse_input("fact: (empty " + topeg + ")")
 
         if self.kb.kb_ask(checkEmpty) != False:
             topegEmpty = True
@@ -201,13 +201,13 @@ class TowerOfHanoiGame(GameMaster):
             cf = 0
             cb = 1
 
-            for f in askBelow:
+            for f in askTop:
                 if self.kb.kb_ask(f) != False:
                     toPegTop[cf] = True
                     break
                 cf = cf + 1
 
-            for b in askTop:
+            for b in toPegTop:
                 if b == True:
                     break
                 cb = cb + 1
@@ -218,13 +218,15 @@ class TowerOfHanoiGame(GameMaster):
 
             newOnt = parse_input("fact: (ont " + theDisk + " " + toPegTopDisk + ")")
             self.kb.kb_assert(newOnt)
+        else:
+            #since it was empty before we have to say it no longer is
+            toPegWasEmpty = parse_input("fact: (empty " + topeg + ")")
+            self.kb.kb_retract(toPegWasEmpty)
 
         newTopToPeg = parse_input("fact: (TheTop " + theDisk + " " + topeg + ")")
         self.kb.kb_assert(newTopToPeg)
 
-        #since it was empty before we have to say it no longer is
-        toPegWasEmpty = parse_input("fact: (empty " + topeg + ")")
-        self.kb.kb_retract(toPegWasEmpty)
+        
       
 
     def reverseMove(self, movable_statement):
