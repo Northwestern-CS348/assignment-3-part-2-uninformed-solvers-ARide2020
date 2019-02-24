@@ -128,12 +128,13 @@ class TowerOfHanoiGame(GameMaster):
                     disk = disks.bindings[0].constant.element
                     peg = peggie
                     order = int(disk[-1])
-                    if peg == "peg1":
-                        Peg1.append(order)
+
+                    if peg == "peg3":
+                        Peg3.append(order)
                     elif peg == "peg2":
                         Peg2.append(order)
                     else:
-                        Peg3.append(order)
+                        Peg1.append(order)
         
         
         Peg1.sort()
@@ -170,6 +171,13 @@ class TowerOfHanoiGame(GameMaster):
         # ### Student code goes here
         # #basically just adding facts and retracting facts
          
+        # theDisk = movable_statement.terms[0].term.element
+        # frompeg = movable_statement.terms[1].term.element
+        # topeg = movable_statement.terms[2].term.element
+
+        # newlocation = parse_input("fact: (on " + theDisk + " " + topeg + ")")
+        # oldlocation = parse_input("fact: (on " + theDisk + " " + frompeg + ")")
+
          
         # belowDisk = [False,False,False,False,False]
         # askBelow = []
@@ -268,7 +276,10 @@ class TowerOfHanoiGame(GameMaster):
         # else:
         #     self.kb.kb_retract(toPegWasEmpty)
         
+        # self.kb.kb_retract(oldTopFromPeg)
         # self.kb.kb_assert(newTopToPeg)
+        # self.kb.kb_assert(newlocation)
+        
 
         theDisk = movable_statement.terms[0].term.element
         frompeg = movable_statement.terms[1].term.element
@@ -276,24 +287,23 @@ class TowerOfHanoiGame(GameMaster):
 
         newlocation = parse_input("fact: (on " + theDisk + " " + topeg + ")")
         oldlocation = parse_input("fact: (on " + theDisk + " " + frompeg + ")")
+        oldTopFromPeg = parse_input("fact: (TheTop " + theDisk + " " + frompeg + ")")
+        newTopToPeg = parse_input("fact: (TheTop " + theDisk + " " + topeg + ")")
 
         oldDiskOntFact = parse_input("fact: (ont " + theDisk + " ?disk2)")
         oldDiskOntBinds = self.kb.kb_ask(oldDiskOntFact)
 
         oldOnt = False
-
-        if oldDiskOntBinds != False:
-            oldDiskOnt = oldDiskOntBinds.list_of_bindings[0][1][0].statement.terms[1].term.element #this long ish gets us the old disk that was below our disk were moving
-            oldOnt = parse_input("fact: (ont " + theDisk + " " + oldDiskOnt + ")")
-
-        oldTopFromPeg = parse_input("fact: (TheTop " + theDisk + " " + frompeg + ")")
-
-        newDiskOntFact = parse_input("fact: (TheTop ?disk " + topeg + ")")
-        newDiskOntBinds = self.kb.kb_ask(newDiskOntFact)
-
         newOnt = False
         toPegWasEmpty = False
         fromPegIsEmpty = False
+
+        if oldDiskOntBinds != False:
+            oldDiskOnt = oldDiskOntBinds.list_of_bindings[0][1][0].statement.terms[1].term.element #this long ish gets us the old disk that was below our disk were moving
+            oldOnt = parse_input("fact: (ont " + theDisk + " " + oldDiskOnt + ")")        
+
+        newDiskOntFact = parse_input("fact: (TheTop ?disk " + topeg + ")")
+        newDiskOntBinds = self.kb.kb_ask(newDiskOntFact)
 
         if newDiskOntBinds != False:
             newDiskOnt = newDiskOntBinds.list_of_bindings[0][1][0].statement.terms[0].term.element#this gets us the disk that was on top of the new peg
@@ -302,7 +312,6 @@ class TowerOfHanoiGame(GameMaster):
         else: #it was empty so we have to get rid of emptiness
             toPegWasEmpty = parse_input("fact: (empty " + topeg + ")")
 
-        newTopToPeg = parse_input("fact: (TheTop " + theDisk + " " + topeg + ")")
 
         if oldOnt != False:
             newTopFromPeg = parse_input("fact: (TheTop " + oldDiskOnt + " " + frompeg + ")")
@@ -310,16 +319,16 @@ class TowerOfHanoiGame(GameMaster):
             fromPegIsEmpty = parse_input("fact: (empty " + frompeg + ")")
         
         self.kb.kb_retract(oldlocation)
+        self.kb.kb_retract(oldTopFromPeg)
+
         if oldOnt != False:
             self.kb.kb_retract(oldOnt)
-        
-        self.kb.kb_retract(oldTopFromPeg)
+
         if newOnt != False:
             self.kb.kb_retract(oldTopToPeg)
         
         if toPegWasEmpty != False:
             self.kb.kb_retract(toPegWasEmpty)
-
 
         self.kb.kb_assert(newlocation)
         self.kb.kb_assert(newOnt)
@@ -590,16 +599,16 @@ class Puzzle8Game(GameMaster):
                 pos = thegoods.bindings[1].constant.element
 
                 if tile != "empty":
-                    tileSize = int(tile[-1])         
+                    order = int(tile[-1])         
                 else:
-                    tileSize = -1
+                    order = -1
             
                 if pos =="pos3":
-                    thirdRow.append(tileSize)
+                    thirdRow.append(order)
                 elif pos == "pos2":
-                    secondRow.append(tileSize)
+                    secondRow.append(order)
                 else:
-                    firstRow.append(tileSize)
+                    firstRow.append(order)
 
         firstRow = tuple(firstRow)
         secondRow = tuple(secondRow)
