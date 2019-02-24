@@ -59,18 +59,17 @@ class SolverDFS(UninformedSolver):
             for kiddos in self.currentState.children:#going down the  branch and becoming a human child or a kiddo and making 
                 nextMove = kiddos.requiredMovable #sure we got visited as an old man by those very childrens
                 theGame.makeMove(nextMove)
-
-                # if(self.visited.get(kiddos, False)):# 
-                #     theGame.reverseMove(nextMove)
                 
                 self.visited[kiddos] = True
                 self.currentState = kiddos
+
                 MovesLeft = True
                 break
             
             if(MovesLeft == False):#if theres no moves/kids left we got to the parent
                 self.currentState = self.currentState.parent
                 self.solveOneStep()
+                
         else:#if no kids we go to the parent
             self.currentState = self.currentState.parent
             self.solveOneStep()
